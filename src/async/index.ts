@@ -1,4 +1,5 @@
 import {Promisify} from './interface';
+import {hasKey, getProperty} from './helpers';
 
 /**
  * Возвращает обертку над промисом, которая позволяет обращаться к свойствам значения,
@@ -67,25 +68,4 @@ export default function async<T>(value: Promise<T>): Promisify<T> {
 			}));
 		},
 	}));
-}
-
-/**
- * True, если `k` - свойство `obj`
- *
- * @param obj
- * @param k
- */
-const hasKey = <T>(obj: T, k: string | number | symbol): k is keyof T =>
-	k in Object(obj);
-
-/**
- * Возвращает `obj[k]` если `k` - свойство `obj`
- * Иначе выбрасывает исключение
- *
- * @param obj
- * @param key
- */
-function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
-	if (hasKey(obj, key)) { return obj[key]; }
-	throw new Error(`Invalid object member "${String(key)}"`);
 }
