@@ -29,6 +29,10 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "include": [
-    "src"
+    "async"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/spec.ts"
   ]
 }
