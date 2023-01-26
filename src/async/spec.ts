@@ -3,57 +3,57 @@ import async from './index';
 describe('async', () => {
 	describe('primitive types', () => {
 		it('number', () => {
-			const foo = async(Promise.resolve(100));
-			foo.toFixed().then((v) => {
+			const number = async(Promise.resolve(100));
+			number.toFixed().then((v) => {
 				expect(v).toBe('100');
 			});
 		});
 
 		it('string', () => {
-			const foo = async(Promise.resolve('foo'));
-			foo.toUpperCase().toLowerCase().then(v => {
+			const str = async(Promise.resolve('foo'));
+			str.toUpperCase().toLowerCase().then(v => {
 				expect(v).toBe('foo');
 			});
-			foo.toString().then(v => {
+			str.toString().then(v => {
 				expect(v).toBe('foo');
 			});
 		});
 
 		it('boolean', () => {
-			const foo = async(Promise.resolve(true));
-			foo.then(v => {
+			const bool = async(Promise.resolve(true));
+			bool.then(v => {
 				expect(v).toBe(true);
 			});
 		});
 
 		it('symbol', () => {
-			const a = Symbol('foo');
-			const foo = async(Promise.resolve(a));
-			foo.then(v => {
-				expect(v).toBe(a);
+			const s = Symbol('foo');
+			const symbol = async(Promise.resolve(s));
+			symbol.then(v => {
+				expect(v).toBe(s);
 			});
-			foo.description.then(v => {
+			symbol.description.then(v => {
 				expect(v).toBe('foo');
 			});
 		});
 
 		it('void', () => {
-			const foo = async(Promise.resolve());
-			foo.then(v => {
+			const empty = async(Promise.resolve());
+			empty.then(v => {
 				expect(v).toBe(undefined);
 			});
 		});
 
 		it('undefined', () => {
-			const foo = async(Promise.resolve(undefined));
-			foo.then(v => {
+			const undef = async(Promise.resolve(undefined));
+			undef.then(v => {
 				expect(v).toBe(undefined);
 			});
 		});
 
 		it('null', () => {
-			const foo = async(Promise.resolve(null));
-			foo.then(v => {
+			const nullish = async(Promise.resolve(null));
+			nullish.then(v => {
 				expect(v).toBe(null);
 			});
 		});
@@ -61,72 +61,78 @@ describe('async', () => {
 
 	describe('native non primitive types', () => {
 		it('function', () => {
-			const foo = async(Promise.resolve(() => 3));
+			const func = async(Promise.resolve(() => 3));
 
-			foo().then(v => {
+			func().then(v => {
 				expect(v).toBe(3);
 			});
 
-			foo().toFixed().then(v => {
+			func().toFixed().then(v => {
 				expect(v).toBe('3');
 			});
 		});
 
 		it('array', () => {
-			const a = async(Promise.resolve([1,2,3]));
-			a[0].toFixed().then(v => {
+			const arr = async(Promise.resolve([1,2,3]));
+			arr[0].toFixed().then(v => {
 				expect(v).toBe('1');
 			});
-			a.slice().push(4).then(v => {
+			arr.slice().push(4).then(v => {
 				expect(v).toBe(4);
 			});
-			a.concat([4,5,6]).then(v => {
+			arr.concat([4,5,6]).then(v => {
 				expect(v).toEqual([1,2,3,4,5,6]);
 			});
-			a.slice().then(v => {
+			arr.slice().then(v => {
 				expect(v).toEqual([1,2,3]);
 			});
-			a.values().then(v => {
+			arr.values().then(v => {
 				expect([...v]).toEqual([1,2,3]);
 			});
-			a[Symbol.iterator]().next().then(v => {
+			arr[Symbol.iterator]().next().then(v => {
 				expect(v.value).toBe(1);
 			});
 		});
 
 		it('set', () => {
-			const a = async(Promise.resolve(new Set([1,2,3])));
-			a.has(2).then(v => {
+			const set = async(Promise.resolve(new Set([1,2,3])));
+			set.has(2).then(v => {
 				expect(v).toBe(true);
 			});
-			a.add(4).then(v => {
+			set.add(4).then(v => {
 				expect(v).toEqual(new Set([1,2,3,4]));
 			});
-			a.values().then(v => {
+			set.values().then(v => {
 				expect([...v]).toEqual([1,2,3,4]);
 			});
-			a.keys().then(v => {
+			set.keys().then(v => {
 				expect([...v]).toEqual([1,2,3,4]);
 			});
 		});
 
 		it('map', () => {
-			const a = async(Promise.resolve(new Map([['f', 3], ['a', 2]])));
-			a.entries().then(v => {
+			const originalMap = new Map([['f', 3], ['a', 2]]);
+			const map = async(Promise.resolve(originalMap));
+			map.entries().then(v => {
 				expect([...v]).toEqual([['f', 3], ['a', 2]]);
 			});
-			a.values().then(v => {
+			map.values().then(v => {
 				expect([...v]).toEqual([3,2]);
 			});
-			a.keys().then(v => {
+			map.keys().then(v => {
 				expect([...v]).toEqual(['f', 'a']);
+			});
+
+			// eslint-disable-next-line no-prototype-builtins
+			map.isPrototypeOf(Object.create(originalMap)).then(v => {
+				expect(v).toBe(true);
 			});
 		});
 
 		it('weak map', () => {
-			const o = {};
-			const a = async(Promise.resolve(new WeakMap([[o, 3]])));
-			a.get(o).then(v => {
+			const obj = {};
+			const asyncObj = async(Promise.resolve(new WeakMap([[obj, 3]])));
+			asyncObj.get(obj).then(v => {
 				expect(v).toEqual(3);
 			});
 		});
@@ -134,26 +140,26 @@ describe('async', () => {
 
 	describe('collision', () => {
 		it('primitive', () => {
-			const a = async(Promise.resolve(4));
-			a.valueOf().then(v => {
+			const number = async(Promise.resolve(4));
+			number.valueOf().then(v => {
 				expect(v).toBe(4);
 			});
-			a.toString().then(v => {
+			number.toString().then(v => {
 				expect(v).toBe('4');
 			});
 		});
 
 		it('object', () => {
-			const o = {b:3};
-			const a = async(Promise.resolve(o));
-			a.valueOf().then(v => {
+			const obj = {b:3};
+			const asyncObj = async(Promise.resolve(obj));
+			asyncObj.valueOf().then(v => {
 				expect(v).toEqual({b:3});
 			});
-			a.toString().then(v => {
+			asyncObj.toString().then(v => {
 				expect(v).toBe('[object Object]');
 			});
 			// eslint-disable-next-line no-prototype-builtins
-			a.isPrototypeOf(Object.create(o)).then(v => {
+			asyncObj.isPrototypeOf(Object.create(obj)).then(v => {
 				expect(v).toBe(true);
 			});
 			async(Promise.resolve({toString:()=>'my obj'})).toString().then(v => {
@@ -162,29 +168,29 @@ describe('async', () => {
 		});
 
 		it('promise', () => {
-			const a = async(Promise.resolve({then: () => 3, catch: () => 0}));
-			a.then(v => {
+			const promiseLike = async(Promise.resolve({then: () => 3, catch: () => 0}));
+			promiseLike.then(v => {
 				expect(v).toEqual({then: () => 3});
 			});
-			a.then().then(v => {
+			promiseLike.then().then(v => {
 				expect(v).toBe(3);
 			});
-			a.catch().then(v => {
+			promiseLike.catch().then(v => {
 				expect(v).toBe(0);
 			});
 		});
 
 		it('promise reject', () => {
-			const a = async(Promise.resolve({fn(): void{
+			const asyncErr = async(Promise.resolve({fn(): void{
 				throw 1;
 			}}));
-			a.fn().catch(v => {
+			asyncErr.fn().catch(v => {
 				expect(v).toBe(1);
 			});
-			const p = async(new Promise<void>((_, reject) => {
+			const promise = async(new Promise<void>((_, reject) => {
 				reject(0);
 			}));
-			p.then().catch(v => {
+			promise.then().catch(v => {
 				expect(v).toBe(0);
 			});
 		});
@@ -192,46 +198,46 @@ describe('async', () => {
 
 	describe('custom types', () => {
 		it('object', () => {
-			const a = {
+			const obj = {
 				v: {b:4},
 				fn(): {b: number}{
 					return this.v;
 				},
 			};
-			const foo = async(Promise.resolve(a));
-			foo.v.b.then(v => {
+			const asyncObj = async(Promise.resolve(obj));
+			asyncObj.v.b.then(v => {
 				expect(v).toBe(4);
 			});
 
-			foo.fn().then(v => {
+			asyncObj.fn().then(v => {
 				expect(v).toEqual({b:4});
 			});
 
-			foo.v.b.toFixed().toLowerCase().then(v => {
+			asyncObj.v.b.toFixed().toLowerCase().then(v => {
 				expect(v).toBe('4');
 			});
 		});
 
 		it('object fn complicated', () => {
-			const b = {
+			const obj = {
 				v: {b:4},
 				fn(a: number): string {
 					return this.v.b + a + 'foo';
 				},
 			};
-			const foo = async(Promise.resolve(b));
+			const asyncObj = async(Promise.resolve(obj));
 
-			foo.fn(3).then(v => {
+			asyncObj.fn(3).then(v => {
 				expect(v).toBe('7foo');
 			});
 
-			foo.fn(3).toLowerCase().toUpperCase().then(v => {
+			asyncObj.fn(3).toLowerCase().toUpperCase().then(v => {
 				expect(v).toBe('7FOO');
 			});
 		});
 
 		it('object fn returns object', () => {
-			const c = {
+			const obj = {
 				v: {b:4},
 				fn(): {a: number, f: () => string}{
 					return {
@@ -241,38 +247,38 @@ describe('async', () => {
 						}};
 				},
 			};
-			const foo = async(Promise.resolve(c));
+			const asyncObj = async(Promise.resolve(obj));
 
-			foo.fn().f().then(v => {
+			asyncObj.fn().f().then(v => {
 				expect(v).toBe('3fff');
 			});
 
-			foo.fn().f().toLowerCase().toUpperCase().then(v => {
+			asyncObj.fn().f().toLowerCase().toUpperCase().then(v => {
 				expect(v).toBe('3FFF');
 			});
 		});
 
 		it('object undefined', () => {
-			const o = {
+			const obj = {
 				p: undefined,
 			};
-			const foo = async(Promise.resolve(o));
+			const asyncObj = async(Promise.resolve(obj));
 
-			foo.p.then(v => {
+			asyncObj.p.then(v => {
 				expect(v).toBe(undefined);
 			});
 		});
 
 		it('object void fn', () => {
-			const o = {
+			const obj = {
 				p(): void {
 					console.log(3);
 				},
 			};
 
-			const foo = async(Promise.resolve(o));
+			const asyncObj = async(Promise.resolve(obj));
 
-			foo.p().then(v => {
+			asyncObj.p().then(v => {
 				expect(v).toBe(undefined);
 			});
 		});
