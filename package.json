@@ -1,11 +1,12 @@
 {
-  "name": "a.sync.access",
+  "name": "a-sync-access",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "author": "g.maxim",
   "license": "MIT",
   "scripts": {
-    "start": "TSC_COMPILE_ON_ERROR=true tsc --watch",
+    "dev": "TSC_COMPILE_ON_ERROR=true tsc --watch",
+    "start": "tsc",
     "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
