@@ -89,6 +89,9 @@ describe('async', () => {
 			a.values().then(v => {
 				expect([...v]).toEqual([1,2,3]);
 			});
+			a[Symbol.iterator]().next().then(v => {
+				expect(v.value).toBe(1);
+			});
 		});
 
 		it('set', () => {
